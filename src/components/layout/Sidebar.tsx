@@ -6,9 +6,10 @@ import { X, Home, BookOpen, Tag, Users, MessageSquare, Bookmark, TrendingUp } fr
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
+  userRole: 'admin' | 'user';
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar, userRole }) => {
   const sidebarVariants = {
     open: {
       x: 0,
@@ -37,7 +38,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
     { name: 'Home', icon: <Home size={20} />, path: '/' },
     { name: 'Blog', icon: <BookOpen size={20} />, path: '/blog' },
     { name: 'Categories', icon: <Tag size={20} />, path: '/categories' },
-    { name: 'Authors', icon: <Users size={20} />, path: '/authors' },
+    ...(userRole === 'admin' ? [{ name: 'Authors', icon: <Users size={20} />, path: '/authors' }] : []),
     { name: 'Comments', icon: <MessageSquare size={20} />, path: '/comments' },
     { name: 'Bookmarks', icon: <Bookmark size={20} />, path: '/bookmarks' },
     { name: 'Trending', icon: <TrendingUp size={20} />, path: '/trending' },

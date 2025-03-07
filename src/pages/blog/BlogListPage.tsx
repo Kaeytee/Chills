@@ -8,7 +8,7 @@ import { useAuth } from '../../hooks/useAuth';
 const BlogListPage: React.FC = () => {
   const { posts, totalPages, currentPage, totalPosts, loading, getPosts } = usePosts();
   const { isAuthenticated } = useAuth();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('latest');
@@ -53,15 +53,15 @@ const BlogListPage: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       const params: { page: number; category?: string; search?: string; sort?: string } = { page };
-      
+
       if (selectedCategory !== 'All') {
         params.category = selectedCategory;
       }
-      
+
       if (searchQuery) {
         params.search = searchQuery;
       }
-      
+
       // Map frontend sort values to backend sort parameters
       switch (sortBy) {
         case 'latest':
@@ -80,12 +80,12 @@ const BlogListPage: React.FC = () => {
         default:
           params.sort = '-createdAt';
       }
-      
+
       await getPosts(params);
     };
-    
+
     fetchPosts();
-  }, [getPosts, page, selectedCategory, sortBy, searchQuery]);
+  }, [page, selectedCategory, sortBy, searchQuery]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,7 +109,7 @@ const BlogListPage: React.FC = () => {
             Explore our collection of articles on technology, design, development, and more.
           </p>
         </div>
-        
+
         {isAuthenticated && (
           <Link
             to="/blog/create"
@@ -287,11 +287,14 @@ const BlogListPage: React.FC = () => {
                 <p className="mb-4 text-dark-300 dark:text-light-300">
                   {post.excerpt}
                 </p>
+                {/* In the blog post card section - fix the author display */}
                 <div className="mb-4 flex items-center text-sm text-dark-400 dark:text-light-400">
                   <User size={14} className="mr-1" />
-                  <span className="mr-4">{post.author.name ||'Anonymous'}</span>
+                  <span className="mr-4">
+                    {post.author?.name || 'Anonymous'} {/* Add optional chaining and fallback */}
+                  </span>
                   <Clock size={14} className="mr-1" />
-                  <span>{post.readTime}</span>
+                  <span>{post.readTime || 'No read time'}</span> {/* Add fallback for readTime */}
                 </div>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {post.tags.map((tag) => (
@@ -350,21 +353,20 @@ const BlogListPage: React.FC = () => {
             >
               Previous
             </button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
               <button
                 key={pageNum}
                 onClick={() => handlePageChange(pageNum)}
-                className={`btn ${
-                  pageNum === currentPage
+                className={`btn ${pageNum === currentPage
                     ? 'btn-primary'
                     : 'btn-outline'
-                } px-4 py-2`}
+                  } px-4 py-2`}
               >
                 {pageNum}
               </button>
             ))}
-            
+
             <button
               onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}

@@ -29,6 +29,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     name,
+    role:'admin',
     gender, // Include gender here
   });
 

@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
 import userRoutes from './routes/users.js';
 import authorRoutes from './routes/authors.js';
+import categoryRoutes from './routes/categories.js';
 
 // Middleware imports
 import { errorHandler } from './middleware/errorMiddleware.js';
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/authors', authorRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Base route
 app.get('/', (req, res) => {

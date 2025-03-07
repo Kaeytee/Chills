@@ -86,6 +86,11 @@ export const getPostById = asyncHandler(async (req, res) => {
 // @route   POST /api/posts
 // @access  Private
 export const createPost = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    res.status(401);
+    throw new Error('User not authenticated');
+  }
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(400);
@@ -125,6 +130,11 @@ export const createPost = asyncHandler(async (req, res) => {
 // @route   PUT /api/posts/:id
 // @access  Private
 export const updatePost = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    res.status(401);
+    throw new Error('User not authenticated');
+  }
+  
   const { id } = req.params;
   const { title, content, excerpt, category, tags, image, status } = req.body;
   

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, Filter, Clock, User, MessageSquare, Heart, Bookmark, ChevronRight, ChevronDown } from 'lucide-react';
-
+import useCategories from '../hooks/useCategories';
 // Mock data for blog posts
 const blogPosts = [
   {
@@ -120,9 +120,6 @@ const blogPosts = [
 ];
 
 // Available categories for filtering
-const categories = ['All', 'Technology', 'Development', 'Design', 'Business', 'Lifestyle'];
-
-// Available sort options
 const sortOptions = [
   { label: 'Latest', value: 'latest' },
   { label: 'Oldest', value: 'oldest' },
@@ -131,12 +128,12 @@ const sortOptions = [
 ];
 
 const BlogPage: React.FC = () => {
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('latest');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -160,7 +157,6 @@ const BlogPage: React.FC = () => {
     },
   };
 
-  // Filter posts based on search query and category
   const filteredPosts = blogPosts.filter((post) => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -171,7 +167,6 @@ const BlogPage: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
-  // Sort posts based on selected sort option
   const sortedPosts = [...filteredPosts].sort((a, b) => {
     switch (sortBy) {
       case 'latest':
@@ -189,7 +184,6 @@ const BlogPage: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
       <div className="text-center">
         <h1 className="text-3xl font-bold font-heading sm:text-4xl md:text-5xl text-dark-100 dark:text-light-100">
           Blog Articles
@@ -199,10 +193,8 @@ const BlogPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Search and Filters */}
       <div className="card p-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          {/* Search */}
           <div className="relative flex-1">
             <input
               type="text"
@@ -214,7 +206,6 @@ const BlogPage: React.FC = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-dark-400 dark:text-light-400" size={18} />
           </div>
 
-          {/* Filters Toggle (Mobile) */}
           <button
             className="btn btn-outline md:hidden w-full flex items-center justify-center"
             onClick={() => setShowFilters(!showFilters)}
@@ -224,25 +215,29 @@ const BlogPage: React.FC = () => {
             <ChevronDown size={18} className={`ml-2 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Desktop Filters */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Category Filter */}
             <div className="flex items-center space-x-2">
               <span className="text-sm text-dark-400 dark:text-light-400">Category:</span>
-              <select
-                className="input py-1.5"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
+              {categoriesLoading ? (
+                <span>Loading...</span>
+              ) : categoriesError ? (
+                <span>Error loading categories</span>
+              ) : (
+                <select
+                  className="input py-1.5"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
-            {/* Sort Filter */}
             <div className="flex items-center space-x-2">
               <span className="text-sm text-dark-400 dark:text-light-400">Sort by:</span>
               <select
@@ -260,28 +255,32 @@ const BlogPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Filters (Collapsible) */}
         {showFilters && (
           <div className="mt-4 space-y-4 md:hidden">
-            {/* Category Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-dark-400 dark:text-light-400">
                 Category:
               </label>
-              <select
-                className="input w-full"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
+              {categoriesLoading ? (
+                <span>Loading...</span>
+              ) : categoriesError ? (
+                <span>Error loading categories</span>
+              ) : (
+                <select
+                  className="input w-full"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
-            {/* Sort Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-dark-400 dark:text-light-400">
                 Sort by:
@@ -302,7 +301,6 @@ const BlogPage: React.FC = () => {
         )}
       </div>
 
-      {/* Blog Posts */}
       {sortedPosts.length > 0 ? (
         <motion.div
           variants={containerVariants}

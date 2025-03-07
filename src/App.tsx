@@ -26,6 +26,7 @@ import ProfilePage from './pages/ProfilePage';
 import Authors from './pages/Authors';
 import AboutPage from './pages/About';
 import ContactPage from './pages/Contact';
+import CategoryPage from './pages/Category';
 
 // Components
 import Notification from './components/common/Notification';
@@ -159,6 +160,9 @@ function App() {
                 
                 {/* Contact Route */}
                 <Route path="contact" element={<ContactPage />} />
+                
+                {/* Category Route */}
+                <Route path="categories/" element={<CategoryPage />} />
 
                 {/* 404 Route */}
                 <Route path="*" element={<NotFoundPage />} />
